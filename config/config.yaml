@@ -1,0 +1,65 @@
+# Path related
+raw_dataset_dir: data\dataset\
+raw_dataset_path: data\processed\raw_dataset.pkl
+cleaned_raw_dataset_path: data\processed\raw_dataset_clean.pkl
+
+# Train dataset
+train_set_path:
+- data/processed/X_train.pkl
+- data/processed/y_train.pkl
+valid_set_path:
+- data/processed/X_valid.pkl
+- data/processed/y_valid.pkl
+test_set_path:
+- data/processed/X_test.pkl
+- data/processed/y_test.pkl
+
+# EDA dataset
+train_set_eda:
+- data/processed/X_train_eda.pkl
+- data/processed/y_train_eda.pkl
+valid_set_eda:
+- data/processed/X_valid_eda.pkl
+- data/processed/y_valid_eda.pkl
+test_set_eda:
+- data/processed/X_test_eda.pkl
+- data/processed/y_test_eda.pkl
+
+# Preprocessing dataset
+train_set_clean:
+- data/processed/X_train_clean.pkl
+- data/processed/y_train_clean.pkl
+valid_set_clean:
+- data/processed/X_valid_clean.pkl
+- data/processed/y_valid_clean.pkl
+test_set_clean:
+- data/processed/X_test_clean.pkl
+- data/processed/y_test_clean.pkl
+
+# Debug related
+print_debug: True
+
+# Label encoding path
+ohe_path: model/ohe_label.pkl
+le_path: model/le_label.pkl
+le_encoder_path: model/le_encoder_label.pkl
+scaler: model/scaler.pkl
+
+# Data Type related
+int32_col:
+- total_children
+- avg_cars_at_home
+- num_children_at_home
+- recyclable_package
+- low_fat
+- coffee_bar
+- video_store
+- salad_bar
+- prepared_food
+- florist
+- units_per_case
+
+# Splitting data related
+label: cost
+
+# 
