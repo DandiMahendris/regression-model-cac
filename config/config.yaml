@@ -40,10 +40,27 @@ test_set_clean:
 print_debug: True
 
 # Label encoding path
-ohe_path: model/ohe_label.pkl
-le_path: model/le_label.pkl
 le_encoder_path: model/le_encoder_label.pkl
+ohe_path: model/ohe_label.pkl
 scaler: model/scaler.pkl
+
+ohe_path_rf: model/ohe_label_rf.pkl
+le_encoder_path_rf: model/le_encoder_label_rf.pkl
+scaler_rf: model/scaler_rf.pkl
+
+ohe_path_filter: model/ohe_label_filter.pkl
+le_encoder_path_filter: model/le_encoder_label_filter.pkl
+scaler_filter: model/scaler_filter.pkl
+
+ohe_path_lasso: model/ohe_label_lasso.pkl
+le_encoder_path_lasso: model/le_encoder_label_lasso.pkl
+scaler_lasso: model/scaler_lasso.pkl
+
+# Modelling path
+production_model_path: model/final_model.pkl
+
+# Training Log
+training_log_path: log/training_log.json
 
 # Data Type related
 int32_col:
@@ -59,7 +76,204 @@ int32_col:
 - florist
 - units_per_case
 
+# Predictor
+api_predictor:
+- store_cost
+- total_children
+- avg_cars_at_home
+- num_children_at_home
+- net_weight
+- units_per_case
+- coffee_bar
+- video_store
+- prepared_food
+- florist
+- promotion_name
+- sales_country
+- occupation
+- avg_yearly_income
+- store_type
+- store_city
+- store_state
+- media_type
+
 # Splitting data related
 label: cost
 
-# 
+# Float and Object Predictor
+float_predictor:
+- store_cost
+- total_children
+- avg_cars_at_home
+- num_children_at_home
+- net_weight
+- units_per_case
+- coffee_bar
+- video_store
+- prepared_food
+- florist
+
+object_predictor:
+- promotion_name
+- sales_country
+- occupation
+- avg_yearly_income
+- store_type
+- store_city
+- store_state
+- media_type
+
+## Float Range
+store_cost:
+- 1632163.0
+- 97274727.0
+total_children:
+- 0.0
+- 5.0
+avg_cars_at_home:
+- 0.0
+- 4.0
+num_children_at_home:
+- 0.0
+- 5.0
+net_weight:
+- 3.0
+- 21.0
+units_per_case:
+- 1.0
+- 36.0
+coffee_bar:
+- 0.0
+- 1.0
+video_store:
+- 0.0
+- 1.0
+prepared_food:
+- 0.0
+- 1.0
+florist:
+- 0.0
+- 1.0
+
+## Object Range
+avg_yearly_income:
+- '$30K - $50K'
+- '$10K - $30K'
+- '$50K - $70K'
+- '$70K - $90K'
+- '$130K - $150K'
+- '$90K - $110K'
+- '$110K - $130K'
+- '$150K +'
+media_type:
+- 'Sunday Paper, Radio'
+- 'TV'
+- 'Cash Register Handout'
+- 'Daily Paper, Radio, TV'
+- 'Product Attachment'
+- 'Daily Paper, Radio'
+- 'Daily Paper'
+- 'Sunday Paper, Radio, TV'
+- 'Street Handout'
+- 'In-Store Coupon'
+- 'Sunday Paper'
+- 'Bulk Mail'
+- 'Radio'
+store_city:
+- 'Salem'
+- 'Orizaba'
+- 'Bellingham'
+- 'Beverly Hills'
+- 'Portland'
+- 'Spokane'
+- 'Camacho'
+- 'San Francisco'
+- 'Bremerton'
+- 'Tacoma'
+- 'Seattle'
+- 'Mexico City'
+- 'Merida'
+- 'Los Angeles'
+- 'Guadalajara'
+- 'Vancouver'
+- 'Hidalgo'
+- 'Victoria'
+- 'Acapulco'
+store_state:
+- 'OR'
+- 'Veracruz'
+- 'WA'
+- 'CA'
+- 'Zacatecas'
+- 'DF'
+- 'Yucatan'
+- 'Jalisco'
+- 'BC'
+- 'Guerrero'
+store_type:
+- 'Deluxe Supermarket'
+- 'Supermarket'
+- 'Small Grocery'
+- 'Gourmet Supermarket'
+- 'Mid-Size Grocery'
+occupation:
+- 'Professional'
+- 'Manual'
+- 'Clerical'
+- 'Management'
+- 'Skilled Manual'
+sales_country:
+- 'USA' 
+- 'Mexico' 
+- 'Canada'
+promotion_name:
+- 'Cash Register Lottery'
+- 'Wallet Savers'
+- 'One Day Sale'
+- 'Bye Bye Baby'
+- 'Savings Galore'
+- 'Saving Days'
+- 'Save-It Sale'
+- 'Super Duper Savers'
+- 'Price Winners'
+- 'Two for One'
+- 'Price Savers'
+- 'Money Savers'
+- 'Free For All'
+- 'Big Time Discounts'
+- 'Dollar Cutters'
+- 'High Roller Savings'
+- 'Price Cutters'
+- 'Weekend Markdown'
+- 'Super Savers'
+- 'Green Light Days'
+- 'Shelf Emptiers'
+- 'I Cant Believe It Sale'
+- 'Sales Days'
+- 'Two Day Sale'
+- 'Sale Winners'
+- 'Double Down Sale'
+- 'Price Slashers'
+- 'Big Time Savings'
+- 'Three for One'
+- 'Green Light Special'
+- 'Coupon Spectacular'
+- 'Big Promo'
+- 'Bag Stuffers'
+- 'Tip Top Savings'
+- 'Shelf Clearing Days'
+- 'Go For It'
+- 'Unbeatable Price Savers'
+- 'Super Wallet Savers'
+- 'Dimes Off'
+- 'Price Smashers'
+- 'Pick Your Savings'
+- 'Sales Galore'
+- 'Price Destroyers'
+- 'Dollar Days'
+- 'You Save Days'
+- 'Best Savings'
+- 'Mystery Sale'
+- 'Fantastic Discounts'
+- 'Double Your Savings'
+

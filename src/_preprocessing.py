@@ -2,8 +2,9 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder, StandardScaler
 from sklearn.impute import SimpleImputer
-from .util import load_config
-from .util import pickle_dump
+from util import load_config
+from util import pickle_dump
+from util import print_debug
 
 config_data = load_config()
 
@@ -209,9 +210,10 @@ class _PreprocessingData:
         
         return data_scaled, scaler
     
-    def _handling_data(self, data, encoding='label_encoder', nominal=None, ordinal=None,
-                       label_encod=None, encoder_ohe=None, standardscaler=None,
-                       imputer_num=None, imputer_cat=None):
+    def _handling_data(self, data, encoding='label_encoder',
+                       label_encod=None, encoder_ohe=None, standard_scaler=None,
+                       imputer_num=None, imputer_cat=None,
+                       method='None'):
         """
         Preprocessed data from dataset (X,y) into cleaned data
 
@@ -232,12 +234,14 @@ class _PreprocessingData:
         X_train : X_train clean
         y : label
         """
-        
+        print_debug(f"Split numeric and categoric data")
         num, cat = self._split_xy(data)
         
+        print_debug("Perform imputer.")
         num = self._imputer_Num(data=num, imputer=imputer_num)
         cat = self._imputer_Cat(data=cat, imputer=imputer_cat)
         
+        print_debug("Perform label encoding.")
         if encoding == 'label_encoder':
             X_train_le, encoder_le = self._LE_cat(cat, encoder=label_encod)
             X_train_ = pd.concat([num, X_train_le], axis=1)
@@ -253,6 +257,21 @@ class _PreprocessingData:
             X_train_concat = pd.concat([X_train_ohe, X_train_le], axis=1)
             X_train_ = pd.concat([num, X_train_concat], axis=1)
         
-        X_clean, scaler = self._standardize_Data(X_train_, scaler=standardscaler)
+        print_debug("Perform Standardizing data.")
+        X_train_ = X_train_.reindex(sorted(X_train_.columns), axis=1)
+
+        X_clean, scaler_ = self._standardize_Data(X_train_, scaler=standard_scaler)
+
+        if method == 'filter':
+            pickle_dump(encoder_le, config_data["le_encoder_path_filter"])
+            pickle_dump(scaler_, config_data["scaler_filter"])
+        elif method == 'lasso':
+            pickle_dump(encoder_le, config_data["le_encoder_path_lasso"])
+            pickle_dump(scaler_, config_data["scaler_lasso"])
+        elif method == 'random_forest':
+            pickle_dump(encoder_le, config_data["le_encoder_path_rf"])
+            pickle_dump(scaler_, config_data["scaler_rf"])
+        else:
+            pass
         
         return X_clean, self.y
