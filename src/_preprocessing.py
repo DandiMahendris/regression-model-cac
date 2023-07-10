@@ -213,7 +213,7 @@ class _PreprocessingData:
     def _handling_data(self, data, encoding='label_encoder',
                        label_encod=None, encoder_ohe=None, standard_scaler=None,
                        imputer_num=None, imputer_cat=None,
-                       method='None'):
+                       method='None', y=True):
         """
         Preprocessed data from dataset (X,y) into cleaned data
 
@@ -234,8 +234,18 @@ class _PreprocessingData:
         X_train : X_train clean
         y : label
         """
-        print_debug(f"Split numeric and categoric data")
-        num, cat = self._split_xy(data)
+
+        if y == False:
+            print_debug(f"Split numeric and categoric data")
+            numerical_col = data.select_dtypes('float64').columns.to_list()
+            categorical_col = data.select_dtypes('object').columns.to_list()
+
+            num = data[numerical_col]
+            cat = data[categorical_col]
+
+        elif y == True:
+            num, cat = self._split_xy(data)
+
         
         print_debug("Perform imputer.")
         num = self._imputer_Num(data=num, imputer=imputer_num)
@@ -262,6 +272,8 @@ class _PreprocessingData:
 
         X_clean, scaler_ = self._standardize_Data(X_train_, scaler=standard_scaler)
 
+        print_debug("Data has been standardized.")
+
         if method == 'filter':
             pickle_dump(encoder_le, config_data["le_encoder_path_filter"])
             pickle_dump(scaler_, config_data["scaler_filter"])
@@ -273,5 +285,10 @@ class _PreprocessingData:
             pickle_dump(scaler_, config_data["scaler_rf"])
         else:
             pass
-        
-        return X_clean, self.y
+
+        print_debug("Returned X_clean.")
+
+        if y == True:
+            return X_clean, self.y
+        else:
+            return X_clean

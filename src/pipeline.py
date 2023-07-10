@@ -28,15 +28,33 @@ def convert_dataset_type(input_data):
     
     return input_data
 
+def create_dataframe(data):
+    # Create an empty dictionary to store column data
+    column_data = {}
+
+    # Iterate over the keys and values in the data dictionary
+    for key, value in data.items():
+        # Determine the data type for the column based on the value
+        if isinstance(value, str):
+            column_data[key] = [value]
+        else:
+            column_data[key] = [value]
+
+    # Create the DataFrame using the column data
+    dataset = pd.DataFrame(column_data)
+
+    return dataset
+
 def check_data(input_data, params, api = False):
     input_data = copy.deepcopy(input_data)
     params = copy.deepcopy(params)
     
     if not api:
-        assert input_data.select_dtypes("object").columns.to_list() == \
-            params["object_predictor"], "an error occurs in object column(s)."
-        assert input_data.select_dtypes("float").columns.to_list() == \
-            params["float_predictor"], "an error occurs in float column(s)."
+        
+        assert sorted(input_data.select_dtypes("float").columns.to_list()) == \
+            sorted(params["float_predictor"]), "an error occurs in float column(s)."
+        assert sorted(input_data.select_dtypes("object").columns.to_list()) == \
+            sorted(params["object_predictor"]), "an error occurs in object column(s)."
             
         assert set(input_data.promotion_name).issubset(set(params["promotion_name"])), \
             "an error occurs in promotion_name range."

@@ -35,10 +35,6 @@ def load_test_clean(config_data: pd.DataFrame) -> pd.DataFrame:
         y = util.pickle_load(config_data["test_set_clean"][1])
 
         return X, y
-    
-    
-
-
 
 ## Create training log function
 def training_log_template() -> dict:
@@ -317,5 +313,135 @@ def get_production_model(list_of_model, training_log, params):
     # Return current chosen production model, log of production models and current training log
     return curr_production_model, production_model_log, training_log
 
+def eval_test(configuration_model: str, params: dict, hyperparams_model: list = None,
+               X_t: pd.DataFrame = pd.DataFrame(), y_t: pd.DataFrame = pd.DataFrame()):
 
+    # Variable to store trained models
+    list_of_trained_model = dict()
+
+    # Create training log template
+    training_log = training_log_template()
+
+    for config in X_train:
+        # Debug message
+        util.print_debug("Training model based on configuration data: {}".format(config))
+
+        if hyperparams_model == None:
+            list_of_model = create_model_object(params)
+        else:
+            list_of_model = copy.deepcopy(hyperparams_model)
+
+        # Variable to store trained model
+        trained_model = list()
+
+        X_train_data = X_train[config]
+        y_train_data = y_train[config]
+        X_valid_data = X_t[config]
+        y_valid_data = y_t[config]
+
+        # Train each model by current dataset
+        for model in list_of_model:
+            # Debug message
+            util.print_debug("Training model: {}".format(model["model_name"]))
+
+            # Training
+            training_time = util.time_stamp()
+            model["model_object"].fit(X_train_data, y_train_data)
+            training_time = (util.time_stamp() - training_time).total_seconds()
+
+            # Debug message
+            util.print_debug("Evaluating model: {}".format(model["model_name"]))
+
+            # Evaluation
+            y_predict = model["model_object"].predict(X_valid_data)
+            rmse = mean_squared_error(y_valid_data, y_predict, squared=True)
+            r2 = r2_score(y_valid_data, y_predict)
+
+            # Debug message
+            util.print_debug("Logging: {}".format(model["model_name"]))
+
+            # Create UID
+            uid = hashlib.md5(str(training_time).encode()).hexdigest()
+
+            model["model_uid"] = uid
+
+            # Create training log data
+            training_log["model_name"].append("{}-{}-{}".format(configuration_model, config, model["model_name"]))
+            training_log["model_uid"].append(uid)
+            training_log["training_time"].append(training_time)
+            training_log["training_date"].append(util.time_stamp())
+            training_log["rmse"].append(rmse)
+            training_log["r2_score"].append(r2)
+
+            # Collenct current trained model
+            trained_model.append(copy.deepcopy(model))
+
+            # Debug Message
+            util.print_debug("Model {} has been trained".format(model["model_name"]))
+
+        # Collect current trained list of model
+        list_of_trained_model[config] = copy.deepcopy(trained_model)
+
+    # Debug message
+    util.print_debug("All combination models and data has been trained.")
+
+
+    return list_of_trained_model, training_log
+
+def load_model():
+    # 1. Load configuration file
+    config_data = util.load_config()
+
+    model_path = config_data["production_model_path"]
+
+    model = util.pickle_load(model_path)
+
+    model_data = model["model_data"]["model_object"]
+
+    return model_data
+
+if __name__ == "__main__":
+    # 1. Load configuration file
+    config_data = util.load_config()
+
+    # 2. Load Dataset
+    X_train, y_train = load_train_clean(config_data)
+    X_valid, y_valid = load_valid_clean(config_data)
+    X_test, y_test = load_test_clean(config_data)
     
+    # 3. Training Dataset
+    list_of_trained_model, training_log = train_eval("baseline", config_data)
+
+    # 4. Save Best Model
+    model, production_model_log, training_logs = get_production_model(list_of_trained_model, training_log, config_data)
+
+    # 5. Create model object
+    list_of_model = create_model_object(config_data)
+
+    # 6. Cross Validation Score
+    model_object = []
+    model_name = []
+
+    for model in list_of_model:
+        model_object.append(model["model_object"])
+        model_name.append(model["model_name"])
+
+    cv = KFold(n_splits=5)
+
+    for index, model in enumerate(model_object):
+        cvs = cross_val_score(estimator=model, X=X_train['filter'], 
+                            y=y_train['filter'], 
+                            cv=cv, 
+                            scoring='neg_root_mean_squared_error')
+        mean = np.round(cvs.mean(), 3)
+        std = np.round(cvs.std(), 3)
+        print(f"cross validation score for the model {model_name[index]} is {mean} +/- {std}.")
+
+    # 7. Check Model Performance
+    list_of_test_model, testing_log = eval_test("baseline", config_data, 
+                                             X_t=X_test, 
+                                             y_t=y_test)
+    
+    # 8. Check Best Model on Validation test
+    print(model['model_log'])
+

@@ -6,7 +6,7 @@ import util as util
 config = util.load_config()
 
 # Load and set images in the first place
-header_images = Image.open('pics/categoric-selection.webp')
+header_images = Image.open('pics/PPSK_2022_TMEC_Header-Image_CAC-2.png')
 st.image(header_images)
 
 # Add some information about the service
@@ -20,70 +20,70 @@ with st.form(key = "Customer_Cost_Acquistion_Form"):
         label = "Enter store_cost Value:",
         min_value = config["store_cost"][0],
         max_value = config["store_cost"][1],
-        help = "Value range from 0 to 500"
+        help = "Value range from 1632163.0 to 97274727.0"
     )
     
     total_children = st.number_input(
         label = "Enter total_children Value:",
         min_value = config["total_children"][0],
         max_value = config["total_children"][1],
-        help = "Value range from 0 to 500"
+        help = "Value range from 0 to 5"
     )
     
     avg_cars_at_home = st.number_input(
         label = "Enter avg_cars_at_home Value:",
         min_value = config["avg_cars_at_home"][0],
         max_value = config["avg_cars_at_home"][1],
-        help = "Value range from 0 to 500"
+        help = "Value range from 0 to 4"
     )
     
     num_children_at_home = st.number_input(
         label = "Enter num_children_at_home Value:",
         min_value = config["num_children_at_home"][0],
         max_value = config["num_children_at_home"][1],
-        help = "Value range from 0 to 500"
+        help = "Value range from 0 to 5"
     )
     
     net_weight = st.number_input(
         label = "Enter net_weight Value:",
         min_value = config["net_weight"][0],
         max_value = config["net_weight"][1],
-        help = "Value range from 0 to 500"
+        help = "Value range from 3 to 21"
     )
     
     units_per_case = st.number_input(
         label = "Enter units_per_case Value:",
         min_value = config["units_per_case"][0],
         max_value = config["units_per_case"][1],
-        help = "Value range from 0 to 500"
+        help = "Value range from 1 to 36"
     )
     
     coffee_bar = st.number_input(
         label = "Enter coffee_bar Value:",
         min_value = config["coffee_bar"][0],
         max_value = config["coffee_bar"][1],
-        help = "Value range from 0 to 500"
+        help = "Value range from 0 to 1"
     )
     
     video_store = st.number_input(
         label = "Enter video_store Value:",
         min_value = config["video_store"][0],
         max_value = config["video_store"][1],
-        help = "Value range from 0 to 500"
+        help = "Value range from 0 to 1"
     )
     
     prepared_food = st.number_input(
         label = "Enter prepared_food Value:",
         min_value = config["prepared_food"][0],
         max_value = config["prepared_food"][1],
-        help = "Value range from 0 to 500"
+        help = "Value range from 0 to 1"
     )
     
     florist = st.number_input(
         label = "Enter florist Value:",
         min_value = config["florist"][0],
         max_value = config["florist"][1],
-        help = "Value range from 0 to 500"
+        help = "Value range from 0 to 1"
     )
     
     # Create select box input
@@ -165,13 +165,13 @@ with st.form(key = "Customer_Cost_Acquistion_Form"):
     avg_yearly_income = st.selectbox(
         label = "From which avg_yearly_income is this data collected?",
         options = (
-            "$30K $50K",
-            "$10K $30K",
-            "$50K $70K",
-            "$70K $90K",
-            "$130K $150K",
-            "$90K $110K",
-            "$110K $130K",
+            "$30K - $50K",
+            "$10K - $30K",
+            "$50K - $70K",
+            "$70K - $90K",
+            "$130K - $150K",
+            "$90K - $110K",
+            "$110K - $130K",
             "$150K +"
         )
     )
@@ -231,18 +231,18 @@ with st.form(key = "Customer_Cost_Acquistion_Form"):
     media_type = st.selectbox(
         label = "From which media_type is this data collected?",
         options = (
-            "Sunday Paper, Radio,",
-            "TV,",
-            "Cash Register Handout,",
-            "Daily Paper, Radio, TV,",
-            "Product Attachment,",
-            "Daily Paper, Radio,",
-            "Daily Paper,",
-            "Sunday Paper, Radio, TV,",
-            "Street Handout,",
-            "In-Store Coupon,",
-            "Sunday Paper,",
-            "Bulk Mail,",
+            "Sunday Paper, Radio",
+            "TV",
+            "Cash Register Handout",
+            "Daily Paper, Radio, TV",
+            "Product Attachment",
+            "Daily Paper, Radio",
+            "Daily Paper",
+            "Sunday Paper, Radio, TV",
+            "Street Handout",
+            "In-Store Coupon",
+            "Sunday Paper",
+            "Bulk Mail",
             "Radio"
         )
     )
@@ -277,11 +277,19 @@ with st.form(key = "Customer_Cost_Acquistion_Form"):
         with st.spinner("Sending data to prediction server ..."):
             res = requests.post("http://localhost:8080/predict", json = raw_data).json()
         
+        # print(res)
+
         # Parse the prediction result
-        if res["error_msg"] != "":
-            st.error("Error Occurs While Predicting: {}".format(res["error_msg"]))
+        if "error_msg" in res:
+            if res["error_msg"] != "":
+                st.error("Error Occurs While Predicting: {}".format(res["error_msg"]))
+            else:
+                # Process the prediction result
+                result = res["res"]
+                # Display the result in Streamlit
+                st.write(result)
         else:
-            res["res"]
+            st.error("Invalid response from the prediction server")
     
     
     
