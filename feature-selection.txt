@@ -1,0 +1,8 @@
+FEATURE SELECTION
+https://machinelearningmastery.com/feature-selection-with-categorical-data/
+https://www.dataknowsall.com/featureselection.html
+https://towardsdatascience.com/categorical-feature-selection-via-chi-square-fc558b09de43
+https://medium.com/analytics-vidhya/categorical-feature-selection-using-chi-squared-test-e4c0d0af6b7e
+https://www.coursera.org/lecture/stanford-statistics/the-chi-square-test-for-homogeneity-and-independence-78IMJ
+https://towardsdatascience.com/beyond-linear-regression-467a7fc3bafb
+https://medium.com/analytics-vidhya/feature-selection-techniques-2614b3b7efcd
