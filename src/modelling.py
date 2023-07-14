@@ -19,18 +19,24 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolu
 from sklearn.model_selection import KFold, cross_val_score
 
 def load_train_clean(config_data: pd.DataFrame) -> pd.DataFrame:
+        """Load train set after preprocessing.
+        """
         X = util.pickle_load(config_data["train_set_clean"][0])
         y = util.pickle_load(config_data["train_set_clean"][1])
 
         return X, y
     
 def load_valid_clean(config_data: pd.DataFrame) -> pd.DataFrame:
+        """Load valid set after preprocessing.
+        """
         X = util.pickle_load(config_data["valid_set_clean"][0])
         y = util.pickle_load(config_data["valid_set_clean"][1])
 
         return X, y
 
 def load_test_clean(config_data: pd.DataFrame) -> pd.DataFrame:
+        """Load test set after preprocessing.
+        """
         X = util.pickle_load(config_data["test_set_clean"][0])
         y = util.pickle_load(config_data["test_set_clean"][1])
 
@@ -64,13 +70,17 @@ def training_log_updater(current_log: dict, params: dict) -> list:
     log_path = params["training_log_path"]
 
     # Try to load training log file
+    util.print_debug("Load training log file if any.")
     try:
         with open(log_path, "r") as file:
             last_log = json.load(file)
+            
         file.close()
 
     # If file not found create a new one
     except FileNotFoundError as fe:
+        util.print_debug("Training log file not found. Create a new one.")
+
         with open(log_path, "w") as file:
             file.write("[]")
         file.close()
@@ -299,13 +309,13 @@ def get_production_model(list_of_model, training_log, params):
                 curr_production_model["model_log"]["training_date"] = str(curr_production_model["model_log"]["training_date"])
                 production_model_log = training_log_updater(curr_production_model["model_log"], params)
                 break
-    
+
     # In case UID not found
     if curr_production_model == None:
         raise RuntimeError("The best model not found in your list of model.")
     
     # Debug message
-    util.print_debug("Model chosen.")
+    util.print_debug(f"Model chosen. {curr_production_model['model_log']['model_name']}")
 
     # Dump chosen production model
     util.pickle_dump(curr_production_model, params["production_model_path"])
@@ -398,6 +408,8 @@ def load_model():
 
     model_data = model["model_data"]["model_object"]
 
+    util.print_debug(f"Model loaded. {model_data}")
+
     return model_data
 
 if __name__ == "__main__":
@@ -413,7 +425,9 @@ if __name__ == "__main__":
     list_of_trained_model, training_log = train_eval("baseline", config_data)
 
     # 4. Save Best Model
-    model, production_model_log, training_logs = get_production_model(list_of_trained_model, training_log, config_data)
+    model, production_model_log, training_logs = get_production_model(list_of_trained_model, 
+                                                                      training_log, 
+                                                                      config_data)
 
     # 5. Create model object
     list_of_model = create_model_object(config_data)
@@ -429,12 +443,15 @@ if __name__ == "__main__":
     cv = KFold(n_splits=5)
 
     for index, model in enumerate(model_object):
-        cvs = cross_val_score(estimator=model, X=X_train['filter'], 
-                            y=y_train['filter'], 
-                            cv=cv, 
-                            scoring='neg_root_mean_squared_error')
+        cvs = cross_val_score(estimator = model, 
+                            X = X_train['filter'], 
+                            y = y_train['filter'], 
+                            cv = cv, 
+                            scoring = 'neg_root_mean_squared_error')
+        
         mean = np.round(cvs.mean(), 3)
         std = np.round(cvs.std(), 3)
+
         print(f"cross validation score for the model {model_name[index]} is {mean} +/- {std}.")
 
     # 7. Check Model Performance

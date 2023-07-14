@@ -66,7 +66,7 @@ def predict(data: api_data):
     print(dataset.head(5))
     
     # 4. Preprocessing data from label encoding and standardizing
-    X = preprocessing._Concat_Preprocessing(dataset)
+    X = preprocessing._Preprocessing_Test(dataset)
 
     print_debug("dataset has been preprocessed.")
 

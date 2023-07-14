@@ -2,54 +2,77 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder, StandardScaler
 from sklearn.impute import SimpleImputer
-from util import load_config
-from util import pickle_dump
-from util import print_debug
+# from . import util
+import util
 
-config_data = load_config()
+config_data = util.load_config()
 
 
-class _PreprocessingData:
+class _Preprocessing_Data:
     """
     Handling raw dataset, \n
     Performed Imputer data, Label Encoding or OHE, and Standardization.
     """
     def __init__(self):
         pass
+
+    def _split_numcat(self, data:dict) -> pd.DataFrame:
+        """Split dataset without label into numerical and categorical.
+
+        Parameters
+        -------
+        data : array-like of shape
+            train_set without label
+
+        Returns
+        --------
+        X_numerical : array-like of shape
+            the training set containing only numerical features.
+        
+        X_category : array-like of shape
+            the training set containing only categorical features.
+        """
+        numerical_col = data.select_dtypes('float64').columns.to_list()
+        categorical_col = data.select_dtypes('object').columns.to_list()
+
+        self.X_num = data[numerical_col]
+        self.X_cat = data[categorical_col]
+
+        return self.X_num, self.X_cat
         
     def _split_xy(self, data:dict) -> pd.DataFrame:
         """Split dataset into Numerical (float64) and Categorical data (object).
 
         Parameters
         -------
-        data : pandas.DataFrame
+        data : array-like of shape
             train_set, valid_set included with label
-        X : pandas.DataFrame
+        X : array-like of shape
           Predictor array
-        y : pandas.DataFrame
+        y : array-like of shape
           label array
 
         Return 
         -------
-        X_numeric : pandas.DataFrame
-                        predictor for numeric only 
-        X_categoric : pandas.DataFrame
-                        predictor for categoric only
+        X_numeric : array-like of shape
+                predictor for numeric only 
+        X_categoric : array-like of shape
+                predictor for categoric only
         """
         
-        X_data = data.drop(columns = config_data['label'], axis=1)
-        y_data = data[config_data['label']]
+        X = data.drop(columns = config_data['label'], axis=1)
+        y = data[config_data['label']]
         
-        self.X = X_data
-        self.y = y_data
+        self.X = X
+        self.y = y
         
-        numerical_col = X_data.select_dtypes('float64').columns.to_list()
-        categorical_col = X_data.select_dtypes('object').columns.to_list()
+        numerical_col = X.select_dtypes('float64').columns.to_list()
+        categorical_col = X.select_dtypes('object').columns.to_list()
 
-        X_num = X_data[numerical_col]
-        X_cat = X_data[categorical_col]
+        self.X_num = X[numerical_col]
+        self.X_cat = X[categorical_col]
 
-        return  X_num, X_cat
+        return self.X_num, self.X_cat
     
     # Perform sanity check
     def _imputer_Num(self, data, imputer=None):
@@ -145,9 +168,12 @@ class _PreprocessingData:
                                     index=data.index,
                                     columns=encoder_col)
         
-        pickle_dump(encoder, config_data["ohe_path"])
+        self.data_encoded = data_encoded
+        self.encoder = encoder
         
-        return data_encoded, encoder
+        util.pickle_dump(encoder, config_data["ohe_path"])
+        
+        return self.data_encoded, self.encoder
     
     def _LE_cat(self, data, encoder = None) -> pd.DataFrame:
         """
@@ -176,9 +202,12 @@ class _PreprocessingData:
         for col in data.columns.to_list():
                 data[col] = le_encoder.fit_transform(data[col])
         
-        pickle_dump(le_encoder, config_data["le_encoder_path"])
+        util.pickle_dump(le_encoder, config_data["le_encoder_path"])
+
+        self.data_encoded = data
+        self.encoder = le_encoder
         
-        return data, le_encoder
+        return self.data_encoded, self.encoder
     
     def _standardize_Data(self, data, scaler=None) -> pd.DataFrame:
         """
@@ -206,89 +235,137 @@ class _PreprocessingData:
                                 index=data.index,
                                 columns=data.columns)
         
-        pickle_dump(scaler, config_data["scaler"])
+        util.pickle_dump(scaler, config_data["scaler"])
+
+        self.data_scaled = data_scaled
+        self.scaler = scaler
         
-        return data_scaled, scaler
+        return self.data_scaled, self.scaler
     
-    def _handling_data(self, data, encoding='label_encoder',
-                       label_encod=None, encoder_ohe=None, standard_scaler=None,
-                       imputer_num=None, imputer_cat=None,
-                       method='None', y=True):
+    def _handling_data(self, 
+                       data, 
+                       encoding = 'Label_Encoding',
+                       encoder = None, 
+                       scaler = None,
+                       imputer_num = None, 
+                       imputer_cat = None,
+                       config = "None", 
+                       y = True):
         """
         Preprocessed data from dataset (X,y) into cleaned data
 
         Parameters
         ----------
-        data : dataset with predictor and label (opt)
-        split_Xy :  True, data will split into X and y
-                    False, data will not splitted (data include predictor only)
+        data : array-like of shape
+            dataset with predictor and label (opt.)
 
-        imputer :   True, data will be imputed
-                    False, data will not imputed
+        y : bool. (default = True)
+            True, data will split into X and y (label)
+            False, X (predictor) only
 
-        standardize : True, data will be normalize
-                      False, data will not be normalize
+        imputer : SimpleImputer object. (default = None)
+
+        scaler : StandarScaler object. (default = None)
+
+        config : str (default = None)
+            Type of config data to save imputer, encoder, and scaler.
+
+            - 'filter' = filter data feature selection
+            - 'lasso' = lasso data feature selection
+            - 'random_forest' = random forest data feature selection
+
+            If None, will saving none.
 
         Returns
         ---------
-        X_train : X_train clean
-        y : label
+        X : array-like of shape
+            encoded and scaled data predictor.
+
+        y : array-like of shape (if y = True)
+            label.
         """
 
+        # --- Split into Numeric and Categoric Data --- #
         if y == False:
-            print_debug(f"Split numeric and categoric data")
-            numerical_col = data.select_dtypes('float64').columns.to_list()
-            categorical_col = data.select_dtypes('object').columns.to_list()
+            util.print_debug("Splitting Numeric and Categoric Data...")
 
-            num = data[numerical_col]
-            cat = data[categorical_col]
+            self._split_numcat(data)
 
         elif y == True:
-            num, cat = self._split_xy(data)
+            self._split_xy(data)
 
+        # --- Impute Missing Value --- #
+        util.print_debug("Perform Imputer...")
+
+        self.X_num = self._imputer_Num(self.X_num, imputer_num)
+        self.X_cat = self._imputer_Cat(self.X_cat, imputer_cat)
         
-        print_debug("Perform imputer.")
-        num = self._imputer_Num(data=num, imputer=imputer_num)
-        cat = self._imputer_Cat(data=cat, imputer=imputer_cat)
-        
-        print_debug("Perform label encoding.")
-        if encoding == 'label_encoder':
-            X_train_le, encoder_le = self._LE_cat(cat, encoder=label_encod)
-            X_train_ = pd.concat([num, X_train_le], axis=1)
+        # --- Label Encoding Categoric data --- #
+
+        # ---- Label Encoding --- #
+        if encoding == 'Label_Encoding':
+            util.print_debug("Perform Label Encoding...")
+
+            self._LE_cat(self.X_cat, encoder)
+            X_train_ = pd.concat([self.X_num, self.data_encoded], axis=1)
             
-        elif encoding == 'ohe':
-            X_train_ohe, encoder_ohe_col, encoder_ohe = self._OHE_Cat(cat, encoder=encoder_ohe)
-            X_train_ = pd.concat([num, X_train_ohe], axis=1)
+        # --- One Hot Encoding --- #
+        elif encoding == 'One_Hot_Encoding':
+            util.print_debug("Perform One Hot Encoding...")
+
+            self._OHE_Cat(self.X_cat, encoder = encoder)
+            X_train_ = pd.concat([self.X_num, self.data_encoded], axis=1)
         
-        else:
-            X_train_ohe, encoder_ohe_col, encoder_ohe = self._OHE_Cat(cat)
-            X_train_le, encoder_le = self._LE_cat(data=cat) 
+        # --- Both --- #
+        elif encoding == 'Both':
+            util.print_debug("Perform Both Label Encoding and One Hot Encoding...")
+
+            X_train_ohe, _, encoder_ohe = self._OHE_Cat(self.X_cat)
+            X_train_le, encoder_le = self._LE_cat(self.X_cat) 
             
             X_train_concat = pd.concat([X_train_ohe, X_train_le], axis=1)
-            X_train_ = pd.concat([num, X_train_concat], axis=1)
+            X_train_ = pd.concat([self.X_num, X_train_concat], axis=1)
+
+        else:
+            raise TypeError("encoding type is not recognized. Should be Label_Encoding, One_Hot_Encoding, or Both.")
         
-        print_debug("Perform Standardizing data.")
+        # --- Standardize Data --- #
+        util.print_debug("Perform Standardizing....")
+
+        # Reindex data
         X_train_ = X_train_.reindex(sorted(X_train_.columns), axis=1)
+        
+        # Standardizing data
+        self._standardize_Data(X_train_, scaler)
 
-        X_clean, scaler_ = self._standardize_Data(X_train_, scaler=standard_scaler)
+        util.print_debug("Data has been standardized.")
 
-        print_debug("Data has been standardized.")
+        # --- Dumping/Save data
+        if config == 'filter':
+            util.print_debug("Dumping encoder and scaler.")
 
-        if method == 'filter':
-            pickle_dump(encoder_le, config_data["le_encoder_path_filter"])
-            pickle_dump(scaler_, config_data["scaler_filter"])
-        elif method == 'lasso':
-            pickle_dump(encoder_le, config_data["le_encoder_path_lasso"])
-            pickle_dump(scaler_, config_data["scaler_lasso"])
-        elif method == 'random_forest':
-            pickle_dump(encoder_le, config_data["le_encoder_path_rf"])
-            pickle_dump(scaler_, config_data["scaler_rf"])
+            util.pickle_dump(self.encoder, config_data["le_encoder_path_filter"])
+            util.pickle_dump(self.scaler, config_data["scaler_filter"])
+
+        elif config == 'lasso':
+            util.print_debug("Dumping encoder and scaler.")
+
+            util.pickle_dump(self.encoder, config_data["le_encoder_path_lasso"])
+            util.pickle_dump(self.scaler, config_data["scaler_lasso"])
+
+        elif config == 'random_forest':
+            util.print_debug("Dumping encoder and scaler.")
+
+            util.pickle_dump(self.encoder, config_data["le_encoder_path_rf"])
+            util.pickle_dump(self.scaler, config_data["scaler_rf"])
+
         else:
             pass
 
-        print_debug("Returned X_clean.")
+        util.print_debug("Returned scaled data.")
+        util.print_debug("="*40)
 
         if y == True:
-            return X_clean, self.y
+            return self.data_scaled, self.y
         else:
-            return X_clean
+            return self.data_scaled
