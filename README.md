@@ -23,7 +23,7 @@
     <li>
       <a href="#prediction-using-api-and-streamlit">Prediction using API and Streamlit</a>
       <ul>
-        <li><a href="#how-to-run-by-api?">How To Run by API?</a></li>
+        <li><a href="#how-to-run-by-api">How To Run by API</a></li>
         <li><a href="#data-input">Data Input</a></li>
       </ul>
     </li>
@@ -117,7 +117,9 @@ git remote add origin git@github.com:DandiMahendris/regression-model-cac.git
 ## Data Preparation
 
 <p align=center>
-<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Data-Preparation-CAC.jpg" alt="preparation" width="300px">
+<a href="https://github.com/DandiMahendris/regression-model-cac/blob/main/01-pipeline.ipynb">
+    <img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Data-Preparation-CAC.jpg" alt="Preparation" width="300px">
+</a>
 </p>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -125,7 +127,9 @@ git remote add origin git@github.com:DandiMahendris/regression-model-cac.git
 ## EDA and Feature Selection
 
 <p align=center>
-<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/EDA-and-Feature-CAC.jpg" alt="EDA">
+<a href="https://github.com/DandiMahendris/regression-model-cac/blob/main/02-eda.ipynb">
+  <img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/EDA-and-Feature-CAC.jpg" alt="EDA">
+</a>
 </p>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -133,7 +137,8 @@ git remote add origin git@github.com:DandiMahendris/regression-model-cac.git
 ## Data Preprocessing and Feature Engineering
 
 <p align=center>
-<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Preprocessing-CAC.jpg" alt="Preprocessing" width="350px">
+<a href="https://github.com/DandiMahendris/regression-model-cac/blob/main/03-preprocessing.ipynb">
+  <img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Preprocessing-CAC.jpg" alt="Preprocessing" width="350px">
 </p>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -141,7 +146,53 @@ git remote add origin git@github.com:DandiMahendris/regression-model-cac.git
 ## Data Modelling
 
 <p align=center>
-<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Modelling-CAC.jpg" alt="Modelling">
+<a href="https://github.com/DandiMahendris/regression-model-cac/blob/main/04-modelling.ipynb">
+  <img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Modelling-CAC.jpg" alt="Modelling">
 </p>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- Prediction using API and Streamlit -->
+## Prediction using API and Streamlit
+<!-- How to Run by API -->
+### How To Run by API
+
+1. Open a <b>`Command Prompt`</b> or <b>`PowerShell`</b> terminal and navigate to the folder's directory. Try to test API by following the code:<br>
+`$ python .\src\api.py`
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/API-Test.png" alt="api-test-1" width=500>
+</p>
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/API-Test-2.png" alt="api-test-2" width=500>
+</p>
+
+2. To try streamlit. Open CMD terminal and type the code: <br>
+`$ streamlit run .\src\streamlit.py`
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Streamlit-Test-1.png" alt="streamlit-test-1" width=500>
+</p>
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Streamlit-test-2.png" alt="streamlit-test-2" width=350>
+</p>
+
+
+### Data Input
+
+Numerical Data:
+|Store_cost|total_children|avg_cars_at_home|num_children_at_home | net_weight | units_per_case | coffee_bar | video_store | prepared_food | florist |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Float | float | float | float | float | float | float | float | float | float |
+| Data Range | Data Range | Data Range | Data Range | Data Range | Data Range | Data Range | Data Range | Data Range | Data Range |
+| 1700k - 97000k | 0-5 | 0-4 | 0-5 | 3-21 | 1-36 | 0-1 | 0-1 | 0-1 | 0-1 |
+
+<br>
+
+Categorical Data:
+| promotion_name |sales_country |occupation |avg_yearly_income  | store_type  | store_city  | store_city  | media_type  |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | 
+| Object | Object | Object | Object | Object | Object | Object | Object | 
+
