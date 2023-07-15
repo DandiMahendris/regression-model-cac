@@ -1,6 +1,8 @@
 # Regression Model - Customer Acquisition Cost - A Feature Selection Approach
 ----
 
+<a name="readme-top"></a>
+
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
@@ -13,7 +15,7 @@
       <a href="#data-workflow">Data Workflow</a>
       <ul>
         <li><a href="#data-preparation">Data Preparation</a></li>
-        <li><a href="#Exploration-Data-Analytics">EDA and <b>Feature Selection</b></a></li>
+        <li><a href="#eda-and-feature-selection">EDA and Feature Selection</a></li>
         <li><a href="#data-preprocessing-and-feature-engineering">Data Preprocessing and Feature Engineering</a></li>
 	<li><a href="#data-modelling">Data Modelling</a></li>      
       </ul>
@@ -30,8 +32,6 @@
 
 <!-- About the Project -->
 ## About The Project
-
-<a name="readme-top"></a>
 
 <p align=center>
 <img src="https://images3.programmersought.com/708/aa/aac300dfe0fc7599cd1dff43f1bd7394.png" width=500>
@@ -56,9 +56,9 @@ The research focuses on various feature selection methods, including but not lim
 ## Business Objective
 
 <b>Customer Acquisition Cost (CAC):</b> This metric represents the average cost a business incurs to acquire a new customer. It includes expenses related to marketing campaigns, advertising, sales efforts, and other customer acquisition activities. 
-<center>
-<img src="https://stream-blog-v2.imgix.net/blog/wp-content/uploads/80a4679aadc20fd469f22cf3074e79ef/Customer-Acquisition-Cost.png?auto=format&fit=clip&ixlib=react-9.0.3&w=768&q=50&dpr=2" width="350px" align="center">
-</center>
+<p align=center>
+<img src="https://stream-blog-v2.imgix.net/blog/wp-content/uploads/80a4679aadc20fd469f22cf3074e79ef/Customer-Acquisition-Cost.png?auto=format&fit=clip&ixlib=react-9.0.3&w=768&q=50&dpr=2" width="350px">
+</p>
 <br>
 The research goal is to investigate the application of machine learning regression models for predicting customer acquisition costs and evaluate the effectiveness of feature selection techniques in improving the accuracy of these models.
 
@@ -116,4 +116,32 @@ git remote add origin git@github.com:DandiMahendris/regression-model-cac.git
 
 ## Data Preparation
 
+<p align=center>
+<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Data-Preparation-CAC.jpg" alt="preparation" width="300px">
+</p>
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## EDA and Feature Selection
+
+<p align=center>
+<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/EDA-and-Feature-CAC.jpg" alt="EDA">
+</p>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Data Preprocessing and Feature Engineering
+
+<p align=center>
+<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Preprocessing-CAC.jpg" alt="Preprocessing" width="350px">
+</p>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Data Modelling
+
+<p align=center>
+<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Modelling-CAC.jpg" alt="Modelling">
+</p>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
