@@ -15,23 +15,29 @@
       <a href="#data-workflow">Data Workflow</a>
       <ul>
         <li><a href="#data-preparation">Data Preparation</a></li>
-        <li><a href="#eda-and-feature-selection">EDA and Feature Selection</a></li>
+        <li>
+          <a href="#eda-and-feature-selection">EDA and Feature Selection</a>
           <ul>
-          <li><a href="#1.-statistical-inference-(univariate-analysis)">1. Statistical Inference (Univariate Analysis)</a></li>
-          <li><a href="#2.-parametric-assumption">2. Parametric Assumption</a></li>
-            <ul>
-            <li><a href="#2.1-normality">2.1 Normality</a></li>
-            <li><a href="#2.2-homogenity-of-variance">2.2 Homogenity of Variance</a></li>
-            </ul>
-          <li><a href="#3.-one-way-anova-test">3. One-Way ANOVA Test</a></li>
-          <li><a href="#4.-two-group-(t-test-or-welch's-test)">4. Two-Group (T-Test or Welch's Test)</a></li>
-            <ul>
-            <li><a href="#4.1-independence-t-test">4.1 Independence T-Test</a></li>
-            <li><a href="#4.2-welch's-test">4.2 Welch's Test</a></li>
-            </ul>
+            <li><a href="#1-statistical-inference-univariate-analysis">1. Statistical Inference (Univariate Analysis)</a></li>
+            <li>
+              <a href="#2-parametric-assumption">2. Parametric Assumption</a>
+              <ul>
+                <li><a href="#2-1-normality">2.1 Normality</a></li>
+                <li><a href="#2-2-homogenity-of-variance">2.2 Homogeneity of Variance</a></li>
+              </ul>
+            </li>
+            <li><a href="#3-one-way-anova-test">3. One-Way ANOVA Test</a></li>
+            <li>
+              <a href="#4-two-group-t-test-or-welchs-test">4. Two-Group (T-Test or Welch's Test)</a>
+              <ul>
+                <li><a href="#4-1-independence-t-test">4.1 Independence T-Test</a></li>
+                <li><a href="#4-2-welchs-test">4.2 Welch's Test</a></li>
+              </ul>
+            </li>
           </ul>
+        </li>
         <li><a href="#data-preprocessing-and-feature-engineering">Data Preprocessing and Feature Engineering</a></li>
-	      <li><a href="#data-modelling">Data Modelling</a></li>      
+        <li><a href="#data-modelling">Data Modelling</a></li>      
       </ul>
     </li>
     <li>
@@ -201,6 +207,7 @@ Interpret the findings:
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### 2. Parametric Assumption
+---
 #### 2.1 Normality
 ----
 
@@ -238,6 +245,7 @@ normality_plot, stat = stats.probplot(model.resid, plot= plt, rvalue= True)
 
 A high PPCC value (close to 1) suggests that the data follows the specified distribution well, while a low PPCC value (close to -1) indicates significant deviations. Other techniques, such as visual inspection or statistical tests like the <b><i>Kolmogorov-Smirnov test</i> or <i>Anderson-Darling test</i></b>
 
+----
 #### 2.2 Homogenity of Variance
 ----
 To evaluate homogeneity of variance, we can use statistical tests like <b><i>Levene's test.</i></b> Levene's test assesses whether the variance of the data significantly differs among the groups defined by the categorical features. 
@@ -310,7 +318,8 @@ Levene of <b>gender:</b> <br>
 &emsp; LeveneResult(statistic=0.740265911515631, <b>pvalue=0.38958058725529066)</b> <br>
 Levene of <b>houseowner:</b> <br> 
 &emsp; LeveneResult(statistic=3.2592825784464243, <b>pvalue=0.07102729946524858)</b>
-  
+
+-----
 #### 4.1 Independence T-Test
 -----
 <b>Equal Variance</b> would perform <b>Independence T-Test</b>.<br>
@@ -338,6 +347,7 @@ t_crit = scipy.stats.t.ppf(alpha * 0.5, degree)
 
 All variable on **Equal Variance** is **Failed to Reject H<sub>0</sub>**, then these variable is not statistically significant since mean between group is same <br>
 
+-----
 #### 4.2 Welch's Test
 -----
 ```python
@@ -352,6 +362,7 @@ t_crit = scipy.stats.t.ppf(alpha*0.5, degree)
 
 **Non-Equal variance** group show **Reject H<sub>0</sub>**, then these vairables is statistically significant
 
+------
 #### 4.3 Barplot of Two-Group
 ------
 <p align="center">
@@ -377,9 +388,13 @@ But for a situation where multicollinearity exists our independent variables are
 
 <mark><b>Multicollinearity</b></mark> may not affect the accuracy of the model as much but we might lose reliability in determining the effects of individual independent features on the dependent feature in your model and that can be a problem when we want to interpret your model.
 
-![Alt text](image.png)
+<p align="center">
+<img src="pics/readme-pics/image-6.png">
+</p>
 
 To handle <b>redundancy of between variable</b>, we can <b>drop variable with high correlation</b> score of pearson correlation.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### 6. Variance Inflation Factor
 
@@ -415,7 +430,78 @@ def cal_vif(X):
   
 vif_features = cal_vif(X_vif)
 vif_features.head()
-  ```
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### 7. Lasso Method (Embedded)
+
+Regularization methods are the most commonly used embedded methods which penalize a feature given a coefficient threshold. Here we will do feature selection using Lasso regularization. 
+
+If the feature is irrelevant, lasso penalizes its coefficient and make it 0. Hence the features with coefficient = 0 are removed and the rest are taken.
+
+```python
+lasso_cv = LassoCV()
+
+# Fit into train_set after StandardScaler
+lasso_cv.fit(train_scaled.drop(columns=config_data['label'],axis=1),
+            train_scaled[config_data['label']])
+
+coef = pd.Series(lasso_cv.coef_, index = train_set[train_scaled.drop(columns=config_data['label'],axis=1).columns.to_list()].columns)
+
+imp_coef = coef.sort_values(ascending=False)
+import matplotlib
+matplotlib.rcParams['figure.figsize'] = (8.0, 10.0)
+imp_coef.plot(kind='barh')
+```
+
+<p align="center">
+<img src="pics/readme-pics/image-7.png">
+</p>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### 8. Random Forest (Embedded)
+
+- **Gini Importance (or mean decrease impurity)**
+
+The features for internal nodes on each Decision Tree are selected with some criterion, which for classification tasks can be **gini impurity or infomation gain**, and for regression is **variance reduction**. <br>
+We can measure how each feature decrease the impurity of the split (the feature with highest decrease is selected for internal node). <br>
+    
+For each feature we can collect how on average it decreases the impurity. The average over all trees in the forest is the measure of the feature importance.
+
+- **Mean Decrease Accuracy**
+
+is a method of computing the feature importance on permuted out-of-bag (OOB) samples based on mean decrease in the accuracy.<br>
+
+```python
+rf = RandomForestRegressor()
+rf.fit(train_scaled.drop(columns=config_data['label'],axis=1), train_scaled[config_data['label']])
+
+rf.feature_importances_
+```
+
+<p align="center">
+<img src="pics/readme-pics/image-8.png">
+</p>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### 9. Permutation Based (Embedded)
+
+The main idea behind this method is to assess the impact of each feature on the model's performance by randomly permuting the values of that feature while keeping other features unchanged. By comparing the model's performance on the original data with the performance on permuted data, we can determine how much each feature contributes to the model's predictive power.
+
+```python
+perm_importance = permutation_importance(rf, train_scaled[predictor], train_scaled[config_data['label']])
+
+sorted_index = perm_importance.importances_std.argsort()
+```
+
+<p align="center">
+<img src="pics/readme-pics/image-9.png">
+</p>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Data Preprocessing and Feature Engineering
 
