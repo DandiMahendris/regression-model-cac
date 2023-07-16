@@ -22,24 +22,41 @@
             <li>
               <a href="#2-parametric-assumption">2. Parametric Assumption</a>
               <ul>
-                <li><a href="#2-1-normality">2.1 Normality</a></li>
-                <li><a href="#2-2-homogenity-of-variance">2.2 Homogeneity of Variance</a></li>
+                <li><a href="#21-normality">2.1 Normality</a></li>
+                <li><a href="#22-homogenity-of-variance">2.2 Homogeneity of Variance</a></li>
               </ul>
             </li>
             <li><a href="#3-one-way-anova-test">3. One-Way ANOVA Test</a></li>
             <li>
               <a href="#4-two-group-t-test-or-welchs-test">4. Two-Group (T-Test or Welch's Test)</a>
               <ul>
-                <li><a href="#4-1-independence-t-test">4.1 Independence T-Test</a></li>
-                <li><a href="#4-2-welchs-test">4.2 Welch's Test</a></li>
+                <li><a href="#41-independence-t-test">4.1 Independence T-Test</a></li>
+                <li><a href="#42-welchs-test">4.2 Welch's Test</a></li>
               </ul>
             </li>
           </ul>
         </li>
-        <li><a href="#data-preprocessing-and-feature-engineering">Data Preprocessing and Feature Engineering</a></li>
-        <li><a href="#data-modelling">Data Modelling</a></li>      
+        <li>
+          <a href="#data-preprocessing-and-feature-engineering">Data Preprocessing and Feature Engineering</a>
+          <ul>
+            <li><a href="#1-imputing">1. Imputing</a></li>
+            <li><a href="#2-encoding">2. Encoding</a></li>
+            <li><a href="#3-scaling">3. Scaling</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#data-modelling">Data Modelling</a>
+          <ul>
+            <li><a href="#1-baseline-model">1. Baseline Model</a></li>
+            <li><a href="#2-cross-validation-score">2. Cross Validation Score</a></li>
+            <li><a href="#3-hyperparameter-model">3. Hyperparameter Model</a></li>
+            <li><a href="#4-model-performance-on-test-dataset">4. Model Performance on Test Dataset</a></li>
+            <li><a href="#"></a></li>
+          </ul>
+        </li>      
       </ul>
     </li>
+    <li><a href="#conclusion">Conclusion</a></li>
     <li>
       <a href="#prediction-using-api-and-streamlit">Prediction using API and Streamlit</a>
       <ul>
@@ -507,8 +524,66 @@ sorted_index = perm_importance.importances_std.argsort()
 
 <p align=center>
 <a href="https://github.com/DandiMahendris/regression-model-cac/blob/main/03-preprocessing.ipynb">
-  <img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Preprocessing-CAC.jpg" alt="Preprocessing" width="350px">
+  <img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Preprocessing-CAC.jpg" alt="Preprocessing" width="350px"></a>
 </p>
+
+<br>
+
+In the data preprocessing step, I employed several essential tools from the scikit-learn library to <b>handle missing values, encode categorical variables, and scale numerical features</b> for optimal model performance.
+
+### 1. Imputing
+----
+
+Firstly, I utilized <b>`sklearn.impute.SimpleImputer`</b> to address missing data in the dataset. This module allowed me to replace missing values with appropriate measures such as the <b>mean, median, or most frequent value</b> from the respective feature. 
+
+By doing so, I ensured that the model training process was not hindered by incomplete data, resulting in more reliable and accurate predictions.
+
+```python
+imputer = SimpleImputer(missing_values=np.nan,
+                        strategy='median')
+imputer.fit(data)
+
+data_imputed_num = pd.DataFrame(imputer.transform(data),
+                            index = data.index,
+                            columns = data.columns)
+```
+
+### 2. Encoding
+----
+
+To handle categorical variables, I applied two techniques sequentially: <b>`sklearn.preprocessing.LabelEncoder`</b> and <b>`sklearn.preprocessing.OneHotEncoder`</b>. Using LabelEncoder, I <b>converted categorical variables into numerical labels</b>, effectively transforming them into a format that machine learning algorithms can process. 
+
+Subsequently, I employed <b>OneHotEncoder to create binary dummy variables for each category.</b> This process is vital for avoiding any ordinal relationship assumptions between categories and enabling the model to interpret the categorical data correctly.
+
+```python
+# One Hot Encoding
+encoder = OneHotEncoder(handle_unknown= 'ignore',
+                        drop = 'if_binary')
+encoder.fit(data)
+encoder_col = encoder.get_feature_names_out(data.columns)
+
+data_encoded = encoder.transform(data).toarray()
+data_encoded = pd.DataFrame(data_encoded,
+                            index=data.index,
+                            columns=encoder_col)
+
+# Label Encoding
+for col in data.columns.to_list():
+    data[col] = le_encoder.fit_transform(data[col])
+```
+
+### 3. Scaling
+----
+Finally, I utilized <b>`sklearn.preprocessing.StandardScaler`</b> to standardize the numerical features. Standardization involves transforming numerical data to <b>have a mean of 0 and a standard deviation of 1.</b> This scaling technique ensures that all numerical features contribute equally to the model, preventing features with larger scales from dominating the learning process.
+
+```python
+scaler = StandardScaler()
+scaler.fit(data)
+
+data_scaled = pd.DataFrame(scaler.transform(data),
+                    index=data.index,
+                    columns=data.columns)
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -516,8 +591,111 @@ sorted_index = perm_importance.importances_std.argsort()
 
 <p align=center>
 <a href="https://github.com/DandiMahendris/regression-model-cac/blob/main/04-modelling.ipynb">
-  <img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Modelling-CAC.jpg" alt="Modelling">
+  <img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Modelling-CAC.jpg" alt="Modelling"></a>
 </p>
+
+### 1. Baseline Model
+In our comparison of three feature selection methods <b>(Training set Univariate, Training set of Lasso, and Training set of Random Forest),</b> we aim to assess their impact on the model's performance in predicting the Customer Acquisition Cost (CAC). To achieve this, we will employ two key metrics, <b> Mean Squared Error (MSE) and Coefficient of Determination (R^2), to evaluate the models' effectiveness. </b>
+
+Firstly, we will create a training log template to store the details of untrained models from various Sklearn methods. The list of methods includes <b><i> K-Nearest Neighbors (KNN), Linear Regression, Decision Tree, Random Forest, Support Vector Regression (SVR), AdaBoost, Gradient Boost, and XGBoost.</i></b> Each untrained model will be assigned a unique identifier (Uid) in the training log.
+
+The model's performance will be evaluated based on three criteria: <b><mark>the lowest Mean Squared Error (indicating better accuracy), the highest R^2 (indicating better explanatory power), and the fastest training time (for efficiency).</mark></b> We will train each model configuration using the three feature selection methods, and the corresponding evaluation scores will be recorded in the Training log along with their Uids.
+
+By examining the validation set data, we will determine the best-performing model and store its results in our directory as the final model. This best model will represent the most effective combination of feature selection method and Sklearn algorithm for predicting the CAC with optimal accuracy, interpretability, and efficiency.
+
+<p align="center">
+<img src="pics/readme-pics/image 10.png" width=550>
+</p>
+
+Based on the baseline model evaluation, the <b><i>Filter method</i> applied on <mark><i>Random Forest Regression</i> appears to be the best model. </mark></b> <br> 
+However, it is worth noting that <b>this model takes <mark>more time for predictions</mark>.</b> If training time is a significant consideration, alternative methods such as <b><i>Lasso Method</i> on <i>Decision Tree Regression</i> or <i>XGBoost Regressor</i> </b> could be viable options.
+
+It is important to mention that <b><i>Decision Tree Regression</i> may result in a high variance model, potentially leading to overfitting.</b> To assess the model's performance on the test set, further evaluation should be conducted. Nevertheless, <i>Decision Tree</i> models are relatively easier to interpret due to their inherent structure.
+
+On the other hand, if <b>the objective is to minimize error within a <mark>shorter amount of time, <i>XGBoost Regression</i> is the recommended choice</mark></b>. However, it is worth noting that XGBoost models are generally <b>more complex and can be more challenging to interpret.</b>
+
+Ultimately, the choice of the model depends on the specific requirements and trade-offs between factors such as <b>accuracy, interpretability, training time, and ease of use.</b>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### 2. Cross Validation Score
+-----
+
+<b>Cross Validation score (CVS)</b>
+---------
+
+<mark><b>CVS</mark> is performed to understand the distribution of data that we can be sure out model generalises well accross the whole dataset and not just a single portion.</b> <br>
+
+    How do we now that single dataset is representative?
+
+Cross Val Score train and test our model on <mark><b>multiple folds</b></mark> and give a better understanding of model performance over the whole dataset instead of just a single train/test split. <br>
+
+If we see that the metrics for all folds cvs are significant differences between them then this <b>may indicate over-fitting to certain folds.</b> <br>
+
+<p align="center">
+<img src="pics/readme-pics/image-11.png" width=550>
+</p>
+
+<b>Scoring: </b> <br>
+-----
+
+<b><i>neg_mean_squared_error</i></b> always <mark><b>return negative (-)</b></mark>, it because cross_val_score function will <b>return maximize value as sign higher is better, the cross_val_score will turn it into negative (-). </b>Hence, cross_val_score will return the smaller value.
+
+<b>e.g.</b> <br>
+MSE Score 5 is better than 9. <br>
+Cross val score will return the higher which is 9. <br>
+As of that, cross_val_score function will turn it into -5 and -9, and <br>
+cross_val_score will return -5 as the higher value. <br>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### 3. Hyperparameter Model
+---------
+
+Since our baseline model has been fitted and shows good performance in terms of <b><i>Mean Squared Error and R^2 Score,</i></b> it becomes a viable option to perform hyperparameter tuning, especially for the top three machine learning methods.
+
+For the Decision Tree method, we can fine-tune the <b>`min_samples_split`, `min_samples_leaf`</b>, and <b>`max_depth`</b> hyperparameters. Adjusting these parameters can help us achieve even lower Mean Squared Error while maintaining reasonable training time. A lower value for `min_samples_split` and `min_samples_leaf` can lead to more complex trees, while controlling the `max_depth` can prevent overfitting and improve generalization.
+
+In the case of the Random Forest method, we can focus on maximizing the <b>`n_estimators`</b>, as increasing the number of estimators can reduce the variance and lead to a more stable model. Additionally, tuning the <b>`max_depth`</b> and <b>`min_samples_split`</b> hyperparameters for each tree can further optimize the model's performance by controlling the depth of individual trees and promoting better splits.
+
+As for the XGBoost method, we have several important hyperparameters to adjust. Setting a lower value for <b>`eta`</b> (learning rate) can slow down the learning process, but it may result in more accurate and robust predictions. Adjusting the <b>`lambda`</b> hyperparameter, which represents L2 regularization, helps prevent feature coefficients from approaching zero, promoting a more robust and stable model. Finally, tuning the <b>`max_depth`</b> parameter can control the depth of the decision trees within the ensemble, balancing the model's complexity and preventing overfitting.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### 4. Model Performance on Test Dataset
+---------
+
+After selecting the best model based on its performance on the <b>validation dataset</b>, the final model is tested on a <b>completely independent test dataset.</b> The test dataset acts as a final evaluation to verify the model's ability to generalize to new, real-world data and provides a final performance estimation.
+
+<p align="center">
+<img src="pics/readme-pics/image 12.png" width=500>
+</p>
+
+<b>Best Model</b><br>
+-----------
+
+Best model performance based on <b>validation data is <mark><i>Random Forest Regressor</i></mark> on <i>Filter Data Configuration</i>,</b><br>
+Show up with <b>MSE Score = 1.023</b> and <b>R2_Score = 0.998</b> <br>
+However, it defent on <b>training time: 47.97s</b>
+
+If you prefer more fast training time with nearly score, you can choose:
+<b><i>Random Forest Regressor</i> on <i>Lasso Data Configuration</i></b><br>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Conclusion
+
+The observed phenomenon where the best model performance is achieved with univariate analysis and <b>the Lasso method, while Random Forest performs poorly,</b> can be attributed to the following factors:
+
+- <b><mark>Relevance of Features:</mark> <i>Univariate analysis and the Lasso method</i></b> focus on selecting the most relevant features for the prediction task. These methods help in identifying <b>the features that have a strong impact on the target variable (CAC) and are directly associated with the outcome.</b> In contrast, Random Forest tends to consider a larger number of features, including some less relevant or noisy ones. If the dataset contains many irrelevant features, Random Forest might struggle to distinguish them, leading to poorer performance compared to more focused feature selection methods like univariate analysis and Lasso.
+
+- <b><mark>Overfitting:</mark> <i>Random Forest</i></b> is an ensemble method that builds multiple decision trees and combines their predictions. While it generally has good performance, there is <b>a possibility of overfitting</b> when the model is too complex or when the number of trees `(n_estimators)` is too high. 
+
+<b><i>XGBoost</i></b> is known for its ability to <b>handle complex, high-dimensional datasets and perform well on a wide range of problems</b>. For instance, if the data <b>exhibits non-linear relationships or high multicollinearity,</b> XGBoost's ability to capture complex interactions between features could give it an advantage over simpler models like Random Forest and Decision Tree. The success of XGBoost might also be attributed to the effectiveness of feature engineering.
+
+Regarding the Random Forest dataset generated from Random Forest feature importance yielding poor performance in its own method, it is possible that <b>the importance scores from one Random Forest model might not be transferable to another Random Forest trained on the same data.</b> The importance scores are specific to each Random Forest instance, and factors such as the <b>number of trees, hyperparameters, and random seed can affect the importance rankings</b>. As a result, using feature importance scores from one model to select features for another Random Forest might not yield the best results.
+
+In summary, the performance differences observed between different feature selection methods and machine learning models can be attributed to the complexity of the data, relevance of features, potential overfitting, hyperparameter tuning, and the unique characteristics of each model and method. It is essential to carefully consider these factors and experiment with various approaches to identify the best combination of feature selection and machine learning methods that yield the optimal performance for predicting CAC.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
