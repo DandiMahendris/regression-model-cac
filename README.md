@@ -17,7 +17,18 @@
         <li><a href="#data-preparation">Data Preparation</a></li>
         <li><a href="#eda-and-feature-selection">EDA and Feature Selection</a></li>
           <ul>
-          <li><a href="#1.-Statistical-Inference">1. Statistical Inference</a></li>
+          <li><a href="#1.-statistical-inference-(univariate-analysis)">1. Statistical Inference (Univariate Analysis)</a></li>
+          <li><a href="#2.-parametric-assumption">2. Parametric Assumption</a></li>
+            <ul>
+            <li><a href="#2.1-normality">2.1 Normality</a></li>
+            <li><a href="#2.2-homogenity-of-variance">2.2 Homogenity of Variance</a></li>
+            </ul>
+          <li><a href="#3.-one-way-anova-test">3. One-Way ANOVA Test</a></li>
+          <li><a href="#4.-two-group-(t-test-or-welch's-test)">4. Two-Group (T-Test or Welch's Test)</a></li>
+            <ul>
+            <li><a href="#4.1-independence-t-test">4.1 Independence T-Test</a></li>
+            <li><a href="#4.2-welch's-test">4.2 Welch's Test</a></li>
+            </ul>
           </ul>
         <li><a href="#data-preprocessing-and-feature-engineering">Data Preprocessing and Feature Engineering</a></li>
 	      <li><a href="#data-modelling">Data Modelling</a></li>      
@@ -152,14 +163,14 @@ This function will allow us to split the dataset randomly while maintaining the 
 </a>
 </p>
 
-### 1. Statistical Inference
+### 1. Statistical Inference (Univariate Analysis)
 
 The given point plot illustrates the relationship between categorical features and the cost (label) data. Although some features appear to have similar means between categories, making it difficult to determine their impact on the label data at a population level, we can conduct statistical inference to gain a more detailed understanding.
 
 To perform statistical inference, we can use techniques like <b><i>Analysis of Variance (ANOVA) or t-tests for categorical variables</i></b>. These methods will help us assess whether the means of the label data are significantly different across the categories of each categorical feature. Here's how we can proceed:
 
 <p align="center">
-<img src="pics/readme-pics/image.png" width=500>
+<img src="pics/readme-pics/image.png" width=600>
 <p>
 
 Formulate hypotheses:
@@ -184,7 +195,7 @@ Interpret the findings:
 - If the null hypothesis is not rejected, it implies that the categorical feature may not be significantly related to the label data and may not play a significant role in determining the cost.
 
 <p align="center">
-<img src="pics\categoric-selection.webp" width=400>
+<img src="pics\categoric-selection.webp" width=600>
 <p>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -218,7 +229,7 @@ normality_plot, stat = stats.probplot(model.resid, plot= plt, rvalue= True)
 ```
 
 <p align="center">
-<img src="pics/readme-pics/image-1.png" width=400>
+<img src="pics/readme-pics/image-1.png" width=500>
 <p>
 
 <b>PPCC</b> shown as R2, if R2 is nearly 1 it shown distribution is uniform
@@ -270,10 +281,9 @@ model_anova_ = (pd.DataFrame(
 model_anova_[model_anova_['PR(>F)'] > 0.05]['columns'].values.tolist()
 ```
 
-<blockquote>
 If <mark><b>PR(>F) > 0.05 : Failed to Reject H0</b></mark>, 
 that states no significant different mean between independent groups
-</blockquote>
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -287,9 +297,8 @@ for col in lst_cate_bool:
     print(f'Levene of {col} : \n {levene}')
 ```
 
-<blockquote>
-<b>The <mark>Levene test</mark> examines the H<sub>0</sub> (null hypothesis) that <mark>all input samples originate from populations with equal variances.</mark></b> <br>
-</blockquote>
+<b>The <mark><i>Levene test</i></mark> examines the H<sub>0</sub> (null hypothesis) that <mark>all input samples originate from populations with equal variances.</mark></b> <br>
+
 
 The test results in a non-significant p-value <b>(huge p-value)</b>, indicating a lack of evidence to <b>reject the null hypothesis.</b> <br>
 Therefore, we conclude that there is homogeneity of variances among the samples, allowing us to proceed with further analysis.
@@ -302,7 +311,7 @@ Levene of <b>gender:</b> <br>
 Levene of <b>houseowner:</b> <br> 
 &emsp; LeveneResult(statistic=3.2592825784464243, <b>pvalue=0.07102729946524858)</b>
   
-#### <b>4.1 Independence T-Test</b>
+#### 4.1 Independence T-Test
 -----
 <b>Equal Variance</b> would perform <b>Independence T-Test</b>.<br>
 <b>Non-Equal Variance</b> would perform <b>Welch's Test</b>.
@@ -324,7 +333,7 @@ t_stat, p_value = ttest_ind(list_0, list_1, equal_var=True, alternative="two-sid
 t_crit = scipy.stats.t.ppf(alpha * 0.5, degree)
 ```
 <p align="center">
-<img src="pics/readme-pics/image-3.png" width=450)
+<img src="pics/readme-pics/image-3.png" width=550)
 </p>
 
 All variable on **Equal Variance** is **Failed to Reject H<sub>0</sub>**, then these variable is not statistically significant since mean between group is same <br>
@@ -338,7 +347,7 @@ t_stat, p_value = ttest_ind(list_0, list_1, equal_var=False)
 t_crit = scipy.stats.t.ppf(alpha*0.5, degree)
 ```
 <p align="center">
-<img src="pics/readme-pics/image-4.png" width=450)
+<img src="pics/readme-pics/image-4.png" width=550)
 </p>
 
 **Non-Equal variance** group show **Reject H<sub>0</sub>**, then these vairables is statistically significant
@@ -346,10 +355,67 @@ t_crit = scipy.stats.t.ppf(alpha*0.5, degree)
 #### 4.3 Barplot of Two-Group
 ------
 <p align="center">
-<img src="pics/readme-pics/image-5.png" width=450>
+<img src="pics/readme-pics/image-5.png" width=550>
 </p>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### 5. Pearson Correlation
+
+Quantitative variable selection aim to drop <mark><b>multicollinearity</b></mark> of variable. <br>
+    `Multicollinearity occurs when two or more independent variables(also known as predictor) are highly correlated with one another in a regression model` <br>
+<br>
+This means that an independent variable can be predicted from another independent variable in a regression model.<br>
+<br>
+Since in a regression model our research objective is to find out how each predictor is impacting the target variable individually,
+
+<b> Y = a<sub>0</sub> + a<sub>1</sub> X<sub>1</sub> + a<sub>2</sub> X<sub>2</sub> </b>
+
+Here X<sub>1</sub> and X<sub>2</sub> are the independent variables.
+But for a situation where multicollinearity exists our independent variables are highly correlated, so if we change X<sub>1</sub> then X<sub>2</sub> also changes and we would not be able to see their Individual effect on Y which is our research objective for a regression model.
+>**“ This makes the effects of X<sub>1</sub> on Y difficult to differentiate  from the effects of X<sub>2</sub> on Y. ”**
+
+<mark><b>Multicollinearity</b></mark> may not affect the accuracy of the model as much but we might lose reliability in determining the effects of individual independent features on the dependent feature in your model and that can be a problem when we want to interpret your model.
+
+![Alt text](image.png)
+
+To handle <b>redundancy of between variable</b>, we can <b>drop variable with high correlation</b> score of pearson correlation.
+
+### 6. Variance Inflation Factor
+
+**Collinearity** is the state where two variables are highly correlated and contain similar information about the **variance within a given dataset.** <br>
+
+To detect collinearity among variables, simply create a correlation matrix and find variables with large absolute values.<br>
+
+Kutner, Nachtsheim, Neter, and Li (2004) suggest to use a <b>VIF ≥ 10 as indication of multicollinearity</b>
+
+```python
+def cal_vif(X):
+    thresh = 10
+    output = pd.DataFrame()
+    k = X.shape[1]
+    
+    vif = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+    for i in range(1,k):
+        print("iteration no ", i)
+        print(vif)
+        a = np.argmax(vif)
+        print('Max vif is for variable no: ', a)
+        if(vif[a]<=thresh):
+            break
+        
+        if(i==1):
+            output = X.drop(X.columns[a], axis=1)
+            vif = [variance_inflation_factor(output.values, j) for j in range(output.shape[1])]
+        elif(i>1):
+            output = output.drop(output.columns[a], axis=1)
+            vif = [variance_inflation_factor(output.values, j) for j in range(output.shape[1])]
+    
+    return(output)
+  
+vif_features = cal_vif(X_vif)
+vif_features.head()
+  ```
 
 ## Data Preprocessing and Feature Engineering
 
