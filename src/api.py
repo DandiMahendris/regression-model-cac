@@ -47,7 +47,7 @@ def home():
 def predict(data: api_data):
     # 0. Load config
     config_data = util.load_config()
-    
+
     # 1. Convert data api to dataframe
     data_dict = data.dict()
     dataset = pipeline.create_dataframe(data_dict)

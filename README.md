@@ -595,6 +595,8 @@ data_scaled = pd.DataFrame(scaler.transform(data),
 </p>
 
 ### 1. Baseline Model
+-----
+
 In our comparison of three feature selection methods <b>(Training set Univariate, Training set of Lasso, and Training set of Random Forest),</b> we aim to assess their impact on the model's performance in predicting the Customer Acquisition Cost (CAC). To achieve this, we will employ two key metrics, <b> Mean Squared Error (MSE) and Coefficient of Determination (R^2), to evaluate the models' effectiveness. </b>
 
 Firstly, we will create a training log template to store the details of untrained models from various Sklearn methods. The list of methods includes <b><i> K-Nearest Neighbors (KNN), Linear Regression, Decision Tree, Random Forest, Support Vector Regression (SVR), AdaBoost, Gradient Boost, and XGBoost.</i></b> Each untrained model will be assigned a unique identifier (Uid) in the training log.
@@ -708,22 +710,22 @@ In summary, the performance differences observed between different feature selec
 `$ python .\src\api.py`
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/API-Test.png" alt="api-test-1" width=500>
+<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/API-Test.png" alt="api-test-1" width=600>
 </p>
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/API-Test-2.png" alt="api-test-2" width=500>
+<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/API-Test-2.png" alt="api-test-2" width=600>
 </p>
 
 2. To try streamlit. Open CMD terminal and type the code: <br>
 `$ streamlit run .\src\streamlit.py`
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Streamlit-Test-1.png" alt="streamlit-test-1" width=500>
+<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Streamlit-Test-1.png" alt="streamlit-test-1" width=600>
 </p>
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Streamlit-test-2.png" alt="streamlit-test-2" width=350>
+<img src="https://raw.githubusercontent.com/DandiMahendris/regression-model-cac/main/pics/Streamlit-test-2.png" alt="streamlit-test-2" width=500>
 </p>
 
 

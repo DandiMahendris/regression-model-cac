@@ -28,6 +28,30 @@ def convert_dataset_type(input_data):
     
     return input_data
 
+
+def create_dataframe_new(data_list):
+    # Create an empty dictionary to store column data
+    column_data = {}
+
+    # Iterate over the keys to initialize the empty lists for each column
+    for key in data_list[0].keys():
+        column_data[key] = []
+
+    # Iterate over each row of data in the list
+    for data in data_list:
+        # Iterate over the keys and values in the data dictionary for each row
+        for key, value in data.items():
+            # Determine the data type for the column based on the value
+            if isinstance(value, (int, float)):
+                column_data[key].append(value)
+            else:
+                column_data[key].append(str(value))  # Convert non-numeric data to strings
+
+    # Create the DataFrame using the column data
+    dataset = pd.DataFrame(column_data)
+
+    return dataset
+
 def create_dataframe(data):
     # Create an empty dictionary to store column data
     column_data = {}
