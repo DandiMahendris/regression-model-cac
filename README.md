@@ -4,68 +4,68 @@
 <a name="readme-top"></a>
 
 <!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li><a href="#about-the-project">About The Project</a></li>
-    <li><a href="#business-objective">Business Objective</a></li>
-    <li><a href="#business-metrics">Business Metrics</a></li>
-    <li><a href="#getting-started">Getting Started</a></li>
-    <li>
-      <a href="#data-workflow">Data Workflow</a>
-      <ul>
-        <li><a href="#data-preparation">Data Preparation</a></li>
-        <li>
-          <a href="#eda-and-feature-selection">EDA and Feature Selection</a>
-          <ul>
-            <li><a href="#1-statistical-inference-univariate-analysis">1. Statistical Inference (Univariate Analysis)</a></li>
-            <li>
-              <a href="#2-parametric-assumption">2. Parametric Assumption</a>
-              <ul>
-                <li><a href="#21-normality">2.1 Normality</a></li>
-                <li><a href="#22-homogenity-of-variance">2.2 Homogeneity of Variance</a></li>
-              </ul>
-            </li>
-            <li><a href="#3-one-way-anova-test">3. One-Way ANOVA Test</a></li>
-            <li>
-              <a href="#4-two-group-t-test-or-welchs-test">4. Two-Group (T-Test or Welch's Test)</a>
-              <ul>
-                <li><a href="#41-independence-t-test">4.1 Independence T-Test</a></li>
-                <li><a href="#42-welchs-test">4.2 Welch's Test</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <a href="#data-preprocessing-and-feature-engineering">Data Preprocessing and Feature Engineering</a>
-          <ul>
-            <li><a href="#1-imputing">1. Imputing</a></li>
-            <li><a href="#2-encoding">2. Encoding</a></li>
-            <li><a href="#3-scaling">3. Scaling</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="#data-modelling">Data Modelling</a>
-          <ul>
-            <li><a href="#1-baseline-model">1. Baseline Model</a></li>
-            <li><a href="#2-cross-validation-score">2. Cross Validation Score</a></li>
-            <li><a href="#3-hyperparameter-model">3. Hyperparameter Model</a></li>
-            <li><a href="#4-model-performance-on-test-dataset">4. Model Performance on Test Dataset</a></li>
-            <li><a href="#"></a></li>
-          </ul>
-        </li>      
-      </ul>
-    </li>
-    <li><a href="#conclusion">Conclusion</a></li>
-    <li>
-      <a href="#prediction-using-api-and-streamlit">Prediction using API and Streamlit</a>
-      <ul>
-        <li><a href="#how-to-run-by-api">How To Run by API</a></li>
-        <li><a href="#data-input">Data Input</a></li>
-      </ul>
-    </li>
-  </ol>
-</details>
+
+<summary>Table of Contents</summary>
+<ol>
+  <li><a href="#about-the-project">About The Project</a></li>
+  <li><a href="#business-objective">Business Objective</a></li>
+  <li><a href="#business-metrics">Business Metrics</a></li>
+  <li><a href="#getting-started">Getting Started</a></li>
+  <li>
+    <a href="#data-workflow">Data Workflow</a>
+    <ul>
+      <li><a href="#data-preparation">Data Preparation</a></li>
+      <li>
+        <a href="#eda-and-feature-selection">EDA and Feature Selection</a>
+        <ul>
+          <li><a href="#1-statistical-inference-univariate-analysis">1. Statistical Inference (Univariate Analysis)</a></li>
+          <li>
+            <a href="#2-parametric-assumption">2. Parametric Assumption</a>
+            <ul>
+              <li><a href="#21-normality">2.1 Normality</a></li>
+              <li><a href="#22-homogenity-of-variance">2.2 Homogeneity of Variance</a></li>
+            </ul>
+          </li>
+          <li><a href="#3-one-way-anova-test">3. One-Way ANOVA Test</a></li>
+          <li>
+            <a href="#4-two-group-t-test-or-welchs-test">4. Two-Group (T-Test or Welch's Test)</a>
+            <ul>
+              <li><a href="#41-independence-t-test">4.1 Independence T-Test</a></li>
+              <li><a href="#42-welchs-test">4.2 Welch's Test</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="#data-preprocessing-and-feature-engineering">Data Preprocessing and Feature Engineering</a>
+        <ul>
+          <li><a href="#1-imputing">1. Imputing</a></li>
+          <li><a href="#2-encoding">2. Encoding</a></li>
+          <li><a href="#3-scaling">3. Scaling</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#data-modelling">Data Modelling</a>
+        <ul>
+          <li><a href="#1-baseline-model">1. Baseline Model</a></li>
+          <li><a href="#2-cross-validation-score">2. Cross Validation Score</a></li>
+          <li><a href="#3-hyperparameter-model">3. Hyperparameter Model</a></li>
+          <li><a href="#4-model-performance-on-test-dataset">4. Model Performance on Test Dataset</a></li>
+          <li><a href="#"></a></li>
+        </ul>
+      </li>      
+    </ul>
+  </li>
+  <li><a href="#conclusion">Conclusion</a></li>
+  <li>
+    <a href="#prediction-using-api-and-streamlit">Prediction using API and Streamlit</a>
+    <ul>
+      <li><a href="#how-to-run-by-api">How To Run by API</a></li>
+      <li><a href="#data-input">Data Input</a></li>
+    </ul>
+  </li>
+</ol>
+
 
 <!-- About the Project -->
 ## About The Project
